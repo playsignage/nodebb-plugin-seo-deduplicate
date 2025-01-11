@@ -1,0 +1,20 @@
+{
+    "id": "nodebb-plugin-seo-deduplicate",
+    "name": "SEO Unduplicate",
+    "description": "A NodeBB plugin to sanitize and deduplicate og:url and canonical meta tags for better SEO.",
+    "version": "1.0.0",
+    "library": "./library.js",
+    "hooks": [
+        {
+            "hook": "filter:middleware.renderHeader",
+            "method": "filterMiddlewareRenderHeader"
+        }
+    ],
+    "keywords": ["nodebb", "plugin", "seo", "og:url", "canonical", "meta-tags"],
+    "author": "Play Digital Signage",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/playsignage/nodebb-plugin-seo-deduplicate.git"
+    }
+}
