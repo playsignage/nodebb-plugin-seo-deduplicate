@@ -36,7 +36,7 @@ function stripQueryString(url) {
         // Remove everything after the question mark, including the question mark
         return url.split('?')[0];
     } catch (error) {
-        console.error('[seo-unduplicate] Error stripping query string:', error);
+        console.error('[seo-deduplicate] Error stripping query string:', error);
         return url; // Return the unmodified URL if an error occurs
     }
 }
@@ -59,7 +59,7 @@ function fixOgUrl(url) {
 
         return parsedUrl.toString();
     } catch (error) {
-        console.error('[seo-unduplicate] Error fixing og:url:', error);
+        console.error('[seo-deduplicate] Error fixing og:url:', error);
         return url; // Return the unmodified URL if an error occurs
     }
 }
