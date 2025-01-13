@@ -14,4 +14,4 @@ npm install nodebb-plugin-seo-deduplicate
 # Then enable the plugin via admin panel
 ```
 
-To see if it works, go to any public page of your forum and add query parameter to the url E.g. https://community.example.com/user/foobar?hello=world . Then, open up page source. Without this plugin, you would see the query parameter in both canonical meta and og:url. With the plugin, the query paramaters will be there.
+To see if it works, go to any public page of your forum and add query parameter to the url E.g. https://community.example.com/user/foobar?hello=world . Then, open up page source. Without this plugin, you would see the query parameter in both canonical meta and og:url. With the plugin, the query paramaters won't be there.
