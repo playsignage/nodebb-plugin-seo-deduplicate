@@ -1,6 +1,6 @@
 {
   "name": "nodebb-plugin-seo-deduplicate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A NodeBB plugin to sanitize and deduplicate og:url and canonical meta tags for better SEO.",
   "main": "library.js",
   "scripts": {
