@@ -31,8 +31,8 @@ module.exports = {
             return data;
         }
 
-        data.categories = data.categories.filter((item) => {
-            return !item?.url?.endsWith('/world');
+        data.categories = data.categories.filter((category) => {
+            return category?.slug !== 'world';
         });
 
         return data;
