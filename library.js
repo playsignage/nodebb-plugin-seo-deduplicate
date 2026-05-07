@@ -5,26 +5,64 @@ const fs = require('fs');
 
 module.exports = {
     // we are not using filter:meta.getMetaTags and filter:meta.getLinkTags because those hooks are
-    // fire too early and og:url and canonical aren't available. And in case of canonical if we try to create an entry
+    // fired too early and og:url and canonical aren't available. And in case of canonical if we try to create an entry
     // the final result contains two canonical links (og:url seems to work fine)
     async filterMiddlewareRenderHeader(hookData) {
 
-        hookData.templateData.metaTags.map((tag) => {
-            if (tag.property == 'og:url') {
+        // Normalize og:url
+        hookData.templateData.metaTags.forEach((tag) => {
+            if (tag.property === 'og:url') {
                 tag.content = fixOgUrl(stripQueryString(tag.content));
             }
         });
 
-        hookData.templateData.linkTags.map((tag) => {
-            if (tag.rel == 'canonical') {
+        // Normalize canonical लिंक
+        hookData.templateData.linkTags.forEach((tag) => {
+            if (tag.rel === 'canonical') {
                 tag.href = stripQueryString(tag.href);
             }
         });
 
-        // Return hookData unmodified for now
+        // Fix og:description for category pages
+        fixCategoryOgDescription(hookData);
+
         return hookData;
     }
 };
+
+/**
+ * Ensure og:description matches category description (not global site description)
+ */
+function fixCategoryOgDescription(hookData) {
+    const reqPath = hookData.req?.path || hookData.req?.url?.split('?')[0];
+
+    if (!reqPath?.startsWith('/category/')) {
+        return;
+    }
+
+    const metaTags = hookData.templateData?.metaTags;
+
+    if (!Array.isArray(metaTags)) {
+        return;
+    }
+
+    const descriptionTag = metaTags.find((tag) => tag.name === 'description');
+
+    if (!descriptionTag?.content) {
+        return;
+    }
+
+    const ogDescriptionTag = metaTags.find((tag) => tag.property === 'og:description');
+
+    if (ogDescriptionTag) {
+        ogDescriptionTag.content = descriptionTag.content;
+    } else {
+        metaTags.push({
+            property: 'og:description',
+            content: descriptionTag.content
+        });
+    }
+}
 
 /**
  * Function to strip query string from a URL.
@@ -33,11 +71,10 @@ module.exports = {
  */
 function stripQueryString(url) {
     try {
-        // Remove everything after the question mark, including the question mark
         return url.split('?')[0];
     } catch (error) {
         console.error('[seo-deduplicate] Error stripping query string:', error);
-        return url; // Return the unmodified URL if an error occurs
+        return url;
     }
 }
 
@@ -51,15 +88,13 @@ function fixOgUrl(url) {
         const parsedUrl = new URL(url);
         const topicRegex = /\/topic\/\d+\/[^/]+(\/\d+)?$/;
 
-        // Check if the URL matches a topic page pattern
         if (topicRegex.test(parsedUrl.pathname)) {
-            // Remove the trailing page offset (e.g., /2)
             parsedUrl.pathname = parsedUrl.pathname.replace(/\/\d+$/, '');
         }
 
         return parsedUrl.toString();
     } catch (error) {
         console.error('[seo-deduplicate] Error fixing og:url:', error);
-        return url; // Return the unmodified URL if an error occurs
+        return url;
     }
 }
