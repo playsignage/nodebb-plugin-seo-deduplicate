@@ -5,10 +5,14 @@
     "version": "1.0.0",
     "library": "./library.js",
     "hooks": [
-        {
-            "hook": "filter:middleware.renderHeader",
-            "method": "filterMiddlewareRenderHeader"
-        }
+      {
+        "hook": "filter:middleware.renderHeader",
+        "method": "filterMiddlewareRenderHeader"
+      },
+      {
+        "hook": "filter:sitemap.getCategories",
+        "method": "filterSitemapCategories"
+      }
     ],
     "keywords": ["nodebb", "plugin", "seo", "og:url", "canonical", "meta-tags"],
     "author": "Play Digital Signage",

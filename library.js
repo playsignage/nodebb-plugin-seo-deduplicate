@@ -1,8 +1,5 @@
 'use strict';
 
-const path = require('path');
-const fs = require('fs');
-
 module.exports = {
     // we are not using filter:meta.getMetaTags and filter:meta.getLinkTags because those hooks are
     // fired too early and og:url and canonical aren't available. And in case of canonical if we try to create an entry
@@ -16,7 +13,7 @@ module.exports = {
             }
         });
 
-        // Normalize canonical लिंक
+        // Normalize canonical
         hookData.templateData.linkTags.forEach((tag) => {
             if (tag.rel === 'canonical') {
                 tag.href = stripQueryString(tag.href);
@@ -27,6 +24,18 @@ module.exports = {
         fixCategoryOgDescription(hookData);
 
         return hookData;
+    },
+
+    async filterSitemapCategories(data) {
+        if (!Array.isArray(data.categories)) {
+            return data;
+        }
+
+        data.categories = data.categories.filter((item) => {
+            return !item?.url?.endsWith('/world');
+        });
+
+        return data;
     }
 };
 
