@@ -20,7 +20,7 @@ module.exports = {
             }
         });
 
-        // Ensure canonical exists on selected core pages
+        // Ensure canonical exists and is correct on selected pages
         ensureCanonical(hookData);
 
         // Fix og:description for category pages
@@ -30,8 +30,11 @@ module.exports = {
     }
 };
 
+/**
+ * Ensure canonical exists and is correct on key pages
+ */
 function ensureCanonical(hookData) {
-    const reqPath = hookData.req?.path || hookData.req?.url?.split('?')[0];
+    const reqPath = getRequestPath(hookData.req);
 
     const CANONICAL_PATHS = new Set([
         '/',
@@ -50,16 +53,31 @@ function ensureCanonical(hookData) {
         return;
     }
 
-    const hasCanonical = linkTags.some((tag) => tag.rel === 'canonical');
+    const canonicalHref = `https://community.playsignage.com${reqPath === '/' ? '/' : reqPath}`;
 
-    if (hasCanonical) {
-        return;
+    const canonicalTag = linkTags.find((tag) => tag.rel === 'canonical');
+
+    if (canonicalTag) {
+        canonicalTag.href = canonicalHref;
+    } else {
+        linkTags.push({
+            rel: 'canonical',
+            href: canonicalHref
+        });
     }
+}
 
-    linkTags.push({
-        rel: 'canonical',
-        href: `https://community.playsignage.com${reqPath === '/' ? '/' : reqPath}`
-    });
+/**
+ * Get correct request path (handles NodeBB internal routing quirks)
+ */
+function getRequestPath(req) {
+    const rawPath =
+        req?.originalUrl ||
+        req?.url ||
+        req?.path ||
+        '';
+
+    return rawPath.split('?')[0] || '/';
 }
 
 /**
@@ -98,8 +116,6 @@ function fixCategoryOgDescription(hookData) {
 
 /**
  * Function to strip query string from a URL.
- * @param {string} url - The original URL.
- * @returns {string} - The URL without the query string.
  */
 function stripQueryString(url) {
     try {
@@ -112,8 +128,6 @@ function stripQueryString(url) {
 
 /**
  * Fix og:url for topic pages by removing the offset.
- * @param {string} url - The original URL.
- * @returns {string} - The fixed URL without the page offset.
  */
 function fixOgUrl(url) {
     try {
