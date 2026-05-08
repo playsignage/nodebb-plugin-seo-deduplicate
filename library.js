@@ -53,7 +53,7 @@ function ensureCanonical(hookData) {
         return;
     }
 
-    const canonicalHref = `https://community.playsignage.com${reqPath === '/' ? '/' : reqPath}`;
+    const canonicalHref = `https://community.playsignage.com${reqPath === '/' ? '' : reqPath}`;
 
     const canonicalTag = linkTags.find((tag) => tag.rel === 'canonical');
 
