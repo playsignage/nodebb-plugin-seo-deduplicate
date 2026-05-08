@@ -8,10 +8,6 @@
       {
         "hook": "filter:middleware.renderHeader",
         "method": "filterMiddlewareRenderHeader"
-      },
-      {
-        "hook": "filter:sitemap.getCategories",
-        "method": "filterSitemapCategories"
       }
     ],
     "keywords": ["nodebb", "plugin", "seo", "og:url", "canonical", "meta-tags"],

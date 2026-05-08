@@ -20,24 +20,47 @@ module.exports = {
             }
         });
 
+        // Ensure canonical exists on selected core pages
+        ensureCanonical(hookData);
+
         // Fix og:description for category pages
         fixCategoryOgDescription(hookData);
 
         return hookData;
-    },
-
-    async filterSitemapCategories(data) {
-        if (!Array.isArray(data.categories)) {
-            return data;
-        }
-
-        data.categories = data.categories.filter((category) => {
-            return category?.slug !== 'world';
-        });
-
-        return data;
     }
 };
+
+function ensureCanonical(hookData) {
+    const reqPath = hookData.req?.path || hookData.req?.url?.split('?')[0];
+
+    const CANONICAL_PATHS = new Set([
+        '/',
+        '/categories',
+        '/login',
+        '/register'
+    ]);
+
+    if (!CANONICAL_PATHS.has(reqPath)) {
+        return;
+    }
+
+    const linkTags = hookData.templateData?.linkTags;
+
+    if (!Array.isArray(linkTags)) {
+        return;
+    }
+
+    const hasCanonical = linkTags.some((tag) => tag.rel === 'canonical');
+
+    if (hasCanonical) {
+        return;
+    }
+
+    linkTags.push({
+        rel: 'canonical',
+        href: `https://community.playsignage.com${reqPath === '/' ? '/' : reqPath}`
+    });
+}
 
 /**
  * Ensure og:description matches category description (not global site description)
