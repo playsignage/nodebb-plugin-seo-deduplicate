@@ -132,10 +132,16 @@ function stripQueryString(url) {
 function fixOgUrl(url) {
     try {
         const parsedUrl = new URL(url);
-        const topicRegex = /\/topic\/\d+\/[^/]+(\/\d+)?$/;
 
+        // Fix topic pagination (/2 etc.)
+        const topicRegex = /\/topic\/\d+\/[^/]+(\/\d+)?$/;
         if (topicRegex.test(parsedUrl.pathname)) {
             parsedUrl.pathname = parsedUrl.pathname.replace(/\/\d+$/, '');
+        }
+
+        // Normalize homepage: remove trailing slash
+        if (parsedUrl.pathname === '/') {
+            parsedUrl.pathname = '';
         }
 
         return parsedUrl.toString();
