@@ -133,15 +133,15 @@ function fixOgUrl(url) {
     try {
         const parsedUrl = new URL(url);
 
-        // Fix topic pagination (/2 etc.)
         const topicRegex = /\/topic\/\d+\/[^/]+(\/\d+)?$/;
+
         if (topicRegex.test(parsedUrl.pathname)) {
             parsedUrl.pathname = parsedUrl.pathname.replace(/\/\d+$/, '');
         }
 
-        // Normalize homepage: remove trailing slash
-        if (parsedUrl.pathname === '/') {
-            parsedUrl.pathname = '';
+        // Normalize homepage og:url to no trailing slash
+        if (parsedUrl.pathname === '/' && !parsedUrl.search && !parsedUrl.hash) {
+            return parsedUrl.origin;
         }
 
         return parsedUrl.toString();
